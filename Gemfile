@@ -49,4 +49,5 @@ gem 'dotenv', groups: [:development, :test]
 gem 'httparty'
 gem 'curb'
 
+gem 'will_paginate', '~> 4.0'
 

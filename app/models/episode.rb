@@ -20,6 +20,10 @@ class Episode < ApplicationRecord
     latest
   end
 
+  def running?
+    latest_execution_processes.any?(&:running?)
+  end
+
   # @return [EpisodeLanguageUrl]
   def video_episode_language_url
     episode_language_urls.find_by(is_video: true)

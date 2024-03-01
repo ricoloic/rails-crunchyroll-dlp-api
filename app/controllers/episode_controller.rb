@@ -1,4 +1,8 @@
 class EpisodeController < ApplicationController
+  def all
+    Episode.all.order(created_at: :desc)
+  end
+
   def episodes
     raw_data = request.raw_post
     episodes = JSON.parse(raw_data)['episodes']
