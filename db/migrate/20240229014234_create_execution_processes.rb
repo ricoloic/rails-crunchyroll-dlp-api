@@ -5,7 +5,6 @@ class CreateExecutionProcesses < ActiveRecord::Migration[7.1]
       t.string :handle
       t.text :command_string
       t.json :output
-      t.references :episode, foreign_key: true
 
       t.datetime :completed_at
       t.timestamps

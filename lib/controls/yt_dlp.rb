@@ -11,7 +11,7 @@ module Controls
     # @param output [String] The path where the audio file should be saved.
     def self.audio(url:, email:, password:, cookies:, output:)
       arguments = ["--username=#{email}", "--password=#{password}", "--cookies=#{cookies}", "--output=#{output}", "--extract-audio", "--audio-format=m4a", url]
-      self.exec(COMMAND, arguments)
+      return self.execute_command(COMMAND, arguments)
     end
 
     # Downloads video from a given URL.
@@ -23,12 +23,22 @@ module Controls
     # @param output [String] The path where the audio file should be saved.
     def self.video(url:, email:, password:, cookies:, output:)
       arguments = ["--username=#{email}", "--password=#{password}", "--cookies=#{cookies}", "--output=#{output}", '--format=""best[height=1080]""', url]
-      self.exec(COMMAND, arguments)
+      return self.execute_command(COMMAND, arguments)
     end
 
     def self.filename(url:, email:, password:, cookies:)
       to_run = [COMMAND, "--username=#{email}", "--password=#{password}", "--cookies=#{cookies}", '--output="%(series)s - %(season_number)sx%(episode_number)s - %(episode)s.%(ext)s"', "--skip-download", "--get-filename", url].join(" ")
       `#{to_run}`.strip.gsub("\n", "")
+    end
+
+    def self.thumbnail(url:, email:, password:, cookies:)
+      to_run = [COMMAND, "--username=#{email}", "--password=#{password}", "--cookies=#{cookies}", "--skip-download", "--get-thumbnail", url].join(" ")
+      `#{to_run}`.strip.gsub("\n", "")
+    end
+
+    def self.description(url:, email:, password:, cookies:)
+      to_run = [COMMAND, "--username=#{email}", "--password=#{password}", "--cookies=#{cookies}", "--skip-download", "--get-description", url].join(" ")
+      `#{to_run}`.strip
     end
   end
 end

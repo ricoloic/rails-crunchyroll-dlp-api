@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_02_29_014234) do
+ActiveRecord::Schema[7.1].define(version: 2024_03_01_173242) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -29,6 +29,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_29_014234) do
     t.bigint "season_id"
     t.integer "position", null: false
     t.string "title", null: false
+    t.text "thumbnail_url"
+    t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["season_id"], name: "index_episodes_on_season_id"
@@ -39,12 +41,12 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_29_014234) do
     t.string "handle"
     t.text "command_string"
     t.json "output"
-    t.bigint "episode_id"
     t.datetime "completed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "previous_execution_process_id"
-    t.index ["episode_id"], name: "index_execution_processes_on_episode_id"
+    t.bigint "orchestration_id"
+    t.index ["orchestration_id"], name: "index_execution_processes_on_orchestration_id"
     t.index ["previous_execution_process_id"], name: "index_execution_processes_on_previous_execution_process_id"
   end
 
@@ -53,6 +55,14 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_29_014234) do
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "orchestrations", force: :cascade do |t|
+    t.string "status"
+    t.bigint "episode_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["episode_id"], name: "index_orchestrations_on_episode_id"
   end
 
   create_table "seasons", force: :cascade do |t|
@@ -73,7 +83,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_29_014234) do
   add_foreign_key "episode_language_urls", "episodes"
   add_foreign_key "episode_language_urls", "languages"
   add_foreign_key "episodes", "seasons"
-  add_foreign_key "execution_processes", "episodes"
   add_foreign_key "execution_processes", "execution_processes", column: "previous_execution_process_id"
+  add_foreign_key "execution_processes", "orchestrations"
+  add_foreign_key "orchestrations", "episodes"
   add_foreign_key "seasons", "shows"
 end

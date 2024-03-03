@@ -1,12 +1,12 @@
 module Constants
-  module ExecutionProcessStatuses
+  module Statuses
     PENDING = "PENDING".freeze
     RUNNING = "RUNNING".freeze
     COMPLETED = "COMPLETED".freeze
     FAILED = "FAILED".freeze
   end
 
-  module ExecutionProcessHandles
+  module Handles
     DOWNLOAD_VIDEO = "DOWNLOAD_VIDEO".freeze
     DOWNLOAD_AUDIOS = "DOWNLOAD_AUDIOS".freeze
     COMPRESS_VIDEO = "COMPRESS_VIDEO".freeze

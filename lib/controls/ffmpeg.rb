@@ -8,7 +8,7 @@ module Controls
     # @param output [String]
     def self.compress(input:, output:)
       arguments = ["-y", "-i", input, "-vcodec", "h264_nvenc", output]
-      self.exec(COMMAND, arguments)
+      return self.execute_command(COMMAND, arguments)
     end
 
     # Merge (track) from the audios to the input video resulting to output
@@ -22,7 +22,7 @@ module Controls
       arguments.concat(%w[-c:v copy -map 0])
       audios.each.with_index { |_, i| arguments.concat(%W[-map #{i + 1}:a]) }
       arguments << output
-      self.exec(COMMAND, arguments)
+      return self.execute_command(COMMAND, arguments)
     end
 
     # Set the track metadata of the input resulting to output
@@ -39,7 +39,7 @@ module Controls
       arguments = ["-y", "-i", input, "-map", "0", "-c", "copy", "-metadata:s:a:0", "title=#{original_language["name"]}", "-metadata:s:a:0", "language=#{original_language["code"]}"]
       other_languages.each.with_index { |other, i| arguments.concat(["-metadata:s:a:#{i + 1}", "title=#{other["name"]}", "-metadata:s:a:#{i + 1}", "language=#{other["code"]}"]) }
       arguments << output
-      self.exec(COMMAND, arguments)
+      return self.execute_command(COMMAND, arguments)
     end
   end
 end
