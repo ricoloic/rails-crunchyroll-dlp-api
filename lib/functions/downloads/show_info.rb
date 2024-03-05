@@ -6,7 +6,7 @@ module Functions
     class ShowInfo
       # @return [Boolean]
       attr_accessor :success
-      # @return [Hash, NilClass]
+      # @return [Array<Hash>, NilClass]
       attr_accessor :data
 
       # @param url [String]

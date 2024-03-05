@@ -8,7 +8,7 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "posts#index"
 
-  post :episodes, controller: :episode, action: :episodes
+  post :episodes_from_json, controller: :episode, action: :from_json
   post :episodes_from_url, controller: :episode, action: :from_url
 
   post :orchestrations, controller: :orchestration, action: :all

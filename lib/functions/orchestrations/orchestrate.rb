@@ -8,10 +8,11 @@ module Functions
 
       # @param episode [Episode]
       # @return [Functions::Orchestrations::Orchestrate]
-      def initialize(episode:, orchestration: nil)
+      def initialize(episode:, orchestration: nil, force: false)
         @episode = episode
         @initiated = false
         @orchestration = orchestration
+        @force = force
       end
 
       # @param episode [Episode]
@@ -19,8 +20,8 @@ module Functions
         new(episode:).init.process
       end
 
-      def self.init(episode:)
-        new(episode:).init
+      def self.init(episode:, force: false)
+        new(episode:, force:).init
       end
 
       def init
@@ -108,7 +109,12 @@ module Functions
 
       def should_start_new?
         return true if previous_orchestration.nil?
-        previous_orchestration&.failed?
+
+        if @force
+          previous_orchestration&.failed? || previous_orchestration&.completed?
+        else
+          previous_orchestration&.failed?
+        end
       end
 
       # @return [Orchestration, NilClass]
