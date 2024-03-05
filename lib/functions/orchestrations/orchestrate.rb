@@ -8,9 +8,10 @@ module Functions
 
       # @param episode [Episode]
       # @return [Functions::Orchestrations::Orchestrate]
-      def initialize(episode:)
+      def initialize(episode:, orchestration: nil)
         @episode = episode
         @initiated = false
+        @orchestration = orchestration
       end
 
       # @param episode [Episode]
@@ -28,6 +29,17 @@ module Functions
         create_orchestration
 
         self
+      end
+
+      # @param orchestration [::Orchestration]
+      def self.run(orchestration:)
+        new(orchestration:, episode: orchestration.episode).run
+      end
+
+      def run
+        return self if orchestration.blank? || orchestration.completed?
+
+        process
       end
 
       def process
@@ -73,6 +85,10 @@ module Functions
         complete_orchestration
       end
 
+      def orchestration
+        @orchestration
+      end
+
       private
 
       def run_orchestration
@@ -92,16 +108,12 @@ module Functions
 
       def should_start_new?
         return true if previous_orchestration.nil?
-        !!previous_orchestration&.failed? || !!previous_orchestration&.completed?
+        previous_orchestration&.failed?
       end
 
       # @return [Orchestration, NilClass]
       def previous_orchestration
         @previous_orchestration ||= episode.orchestration
-      end
-
-      def orchestration
-        @orchestration
       end
 
       def create_orchestration

@@ -50,6 +50,8 @@
     <orderEntry type="library" scope="PROVIDED" name="curb (v1.0.5, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="date (v3.3.4, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="debug (v1.9.1, asdf: 3.2.2) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="delayed_job (v4.1.11, asdf: 3.2.2) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="delayed_job_active_record (v4.1.8, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="dotenv (v3.1.0, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="drb (v2.2.0, asdf: 3.2.2) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="erubi (v1.12.0, asdf: 3.2.2) [gem]" level="application" />
@@ -112,6 +114,9 @@
         <option value="benchmark" />
         <option value="channel" />
         <option value="controller" />
+        <option value="delayed_job" />
+        <option value="delayed_job:active_record" />
+        <option value="delayed_job:upgrade" />
         <option value="generator" />
         <option value="integration_test" />
         <option value="job" />
@@ -149,6 +154,9 @@
         <option value="benchmark" />
         <option value="channel" />
         <option value="controller" />
+        <option value="delayed_job" />
+        <option value="delayed_job:active_record" />
+        <option value="delayed_job:upgrade" />
         <option value="generator" />
         <option value="integration_test" />
         <option value="job" />
@@ -436,6 +444,16 @@
                 </subtasks>
               </RakeTaskImpl>
               <RakeTaskImpl description="" fullCommand="db:truncate_all" id="truncate_all" />
+            </subtasks>
+          </RakeTaskImpl>
+          <RakeTaskImpl id="jobs">
+            <subtasks>
+              <RakeTaskImpl description="Exit with error status if any jobs older than max_age seconds haven't been attempted yet" fullCommand="jobs:check[max_age]" id="check[max_age]" />
+              <RakeTaskImpl description="Clear the delayed_job queue" fullCommand="jobs:clear" id="clear" />
+              <RakeTaskImpl description="Start a delayed_job worker" fullCommand="jobs:work" id="work" />
+              <RakeTaskImpl description="Start a delayed_job worker and exit when all available jobs are complete" fullCommand="jobs:workoff" id="workoff" />
+              <RakeTaskImpl description="" fullCommand="jobs:check" id="check" />
+              <RakeTaskImpl description="" fullCommand="jobs:environment_options" id="environment_options" />
             </subtasks>
           </RakeTaskImpl>
           <RakeTaskImpl id="log">

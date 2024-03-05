@@ -88,6 +88,11 @@ GEM
     debug (1.9.1)
       irb (~> 1.10)
       reline (>= 0.3.8)
+    delayed_job (4.1.11)
+      activesupport (>= 3.0, < 8.0)
+    delayed_job_active_record (4.1.8)
+      activerecord (>= 3.0, < 8.0)
+      delayed_job (>= 3.0, < 5)
     dotenv (3.1.0)
     drb (2.2.0)
       ruby2_keywords
@@ -212,6 +217,7 @@ DEPENDENCIES
   bootsnap
   curb
   debug
+  delayed_job_active_record
   dotenv
   httparty
   pg

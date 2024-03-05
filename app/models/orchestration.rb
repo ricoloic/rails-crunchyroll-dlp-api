@@ -44,6 +44,18 @@ class Orchestration < ApplicationRecord
     execution_processes.last
   end
 
+  def run_pending
+    return unless self.completed?
+
+    return unless Orchestration.running.count < 2
+
+    orchestration = Orchestration.pending.first
+
+    return if orchestration.blank?
+
+    Functions::Orchestrations::Orchestrate.run(orchestration:)
+  end
+
   def to_minimal_json_data
     {
       show: show.title,

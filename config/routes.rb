@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   # root "posts#index"
 
   post :episodes, controller: :episode, action: :episodes
+  post :episodes_from_url, controller: :episode, action: :from_url
 
   post :orchestrations, controller: :orchestration, action: :all
   get 'orchestrations/:id', controller: :orchestration, action: :by_id

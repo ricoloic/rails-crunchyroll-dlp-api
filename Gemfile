@@ -51,3 +51,4 @@ gem 'curb'
 
 gem 'will_paginate', '~> 4.0'
 
+gem 'delayed_job_active_record'
