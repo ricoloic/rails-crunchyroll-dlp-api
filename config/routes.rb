@@ -13,4 +13,5 @@ Rails.application.routes.draw do
 
   post :orchestrations, controller: :orchestration, action: :all
   get 'orchestrations/:id', controller: :orchestration, action: :by_id
+  post 'orchestrations/:id/cancel', controller: :orchestration, action: :cancel_by_id
 end

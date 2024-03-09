@@ -69,6 +69,7 @@ module Functions
           FileUtils.makedirs(season_dir)
           FileUtils.makedirs(episode_dir)
           FileUtils.makedirs(audio_dir)
+          FileUtils.makedirs(sub_dir)
           self
         end
 
@@ -109,6 +110,10 @@ module Functions
 
         def audio_dir
           @audio_dir ||= episode_dir.join("audio")
+        end
+
+        def sub_dir
+          @sub_dir ||= episode_dir.join('subtitle')
         end
 
         def cookie_filepath

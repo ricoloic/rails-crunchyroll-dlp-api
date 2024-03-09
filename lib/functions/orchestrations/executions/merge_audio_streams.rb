@@ -1,3 +1,5 @@
+require 'fileutils'
+
 module Functions
   module Orchestrations
     module Executions
@@ -7,9 +9,13 @@ module Functions
 
           return true if Pathname.new(output[handle]["path"]).exist?
 
+          files = Dir[sub_dir.join("**/*.ass").to_s]
+          pp files
+
           Controls::Ffmpeg.merge(
             input: output[Constants::Handles::COMPRESS_VIDEO]["path"],
             audios: output[Constants::Handles::DOWNLOAD_AUDIOS].map { |audio| audio["path"] },
+            subtitles: files,
             output: output[handle]["path"]
           )
         end

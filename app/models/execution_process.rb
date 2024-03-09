@@ -17,6 +17,9 @@ class ExecutionProcess < ApplicationRecord
   scope :pending, -> { where(status: Constants::Statuses::PENDING) }
   scope :not_pending, -> { where.not(pending) }
 
+  scope :canceled, -> { where(status: Constants::Statuses::CANCELED) }
+  scope :not_canceled, -> { where.not(canceled) }
+
   def running?
     status == Constants::Statuses::RUNNING
   end
@@ -31,5 +34,9 @@ class ExecutionProcess < ApplicationRecord
 
   def failed?
     status == Constants::Statuses::FAILED
+  end
+
+  def canceled?
+    status == Constants::Statuses::CANCELED
   end
 end

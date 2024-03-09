@@ -12,13 +12,15 @@ module Functions
       # @param url [String]
       # @param season [Integer]
       # @param languages [Array<String>]
+      # @param skip [Integer]
       # @return [Functions::Downloads::ShowInfo]
-      def initialize(url:, season:, languages:)
+      def initialize(url:, season:, languages:, skip: 0)
         @dir = Pathname.new("/").join("home").join("rico").join("personal").join("download-files").join(SecureRandom.base64(20))
         @file = @dir.join("#{Time.now.gmtime.to_s}.json")
         @url = url
         @season = season
         @languages = languages
+        @skip = skip
         @success = false
         @data = nil
       end
@@ -26,7 +28,7 @@ module Functions
       def process
         create_dir
 
-        @success = Controls::Scrapper.download(url: @url, languages: @languages, season: @season, file: @file.to_s)
+        @success = Controls::Scrapper.download(url: @url, languages: @languages, season: @season, file: @file.to_s, skip: @skip)
         @success = File.exist?(@file.to_s)
         return self unless @success
 

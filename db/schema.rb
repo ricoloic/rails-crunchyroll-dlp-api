@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_03_04_233425) do
+ActiveRecord::Schema[7.1].define(version: 2024_03_08_062538) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -48,6 +48,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_04_233425) do
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.jsonb "subtitles", default: []
     t.index ["season_id"], name: "index_episodes_on_season_id"
   end
 
@@ -77,6 +78,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_04_233425) do
     t.bigint "episode_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "canceled_at"
     t.index ["episode_id"], name: "index_orchestrations_on_episode_id"
   end
 

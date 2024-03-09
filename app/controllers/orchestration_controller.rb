@@ -19,6 +19,12 @@ class OrchestrationController < ApplicationController
     render json: Orchestration.find(by_id_params[:id]).to_json_data
   end
 
+  def cancel_by_id
+    orchestration = Orchestration.find(by_id_params[:id])
+    orchestration.update(status: Constants::Statuses::CANCELED) unless orchestration.canceled?
+    render json: orchestration.to_json_data
+  end
+
   def by_id_params
     params.permit(:id)
   end

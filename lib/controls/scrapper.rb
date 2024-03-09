@@ -6,8 +6,9 @@ module Controls
     # @param season [Integer]
     # @param languages [Array<String>]
     # @param file [String]
-    def self.download(url:, season:, languages:, file:)
-      arguments = %W[-f=#{file} -s=#{season}]
+    # @param skip [Integer]
+    def self.download(url:, season:, languages:, file:, skip:)
+      arguments = %W[-f=#{file} -s=#{season} -S=#{skip}]
       languages.each { |language| arguments << "-l=#{language}" }
       arguments << url
       return self.execute_command(COMMAND, arguments)

@@ -48,41 +48,62 @@ module Functions
 
         run_orchestration
 
+        if @force || previous_orchestration&.failed?
+          execution_process = Functions::Orchestrations::Executions::RemoveLocalFiles
+                                .process(orchestration: orchestration)
+                                .execution_process
+          return fail_orchestration if execution_process.failed?
+        end
+
+        return cancel_orchestration if orchestration.canceled?
         execution_process = Functions::Orchestrations::Executions::DownloadVideo
                               .process(orchestration: orchestration)
                               .execution_process
         return fail_orchestration if execution_process.failed?
 
+        return cancel_orchestration(execution_process:) if orchestration.canceled?
         execution_process = Functions::Orchestrations::Executions::CompressVideo
                               .process(previous_execution: execution_process, orchestration: orchestration)
                               .execution_process
         return fail_orchestration if execution_process.failed?
 
+        return cancel_orchestration(execution_process:) if orchestration.canceled?
         execution_process = Functions::Orchestrations::Executions::DownloadAudios
                               .process(previous_execution: execution_process, orchestration: orchestration)
                               .execution_process
         return fail_orchestration if execution_process.failed?
 
+        return cancel_orchestration(execution_process:) if orchestration.canceled?
+        execution_process = Functions::Orchestrations::Executions::DownloadSubtitles
+                              .process(previous_execution: execution_process, orchestration: orchestration)
+                              .execution_process
+        return fail_orchestration if execution_process.failed?
+
+        return cancel_orchestration(execution_process:) if orchestration.canceled?
         execution_process = Functions::Orchestrations::Executions::MergeAudioStreams
                               .process(previous_execution: execution_process, orchestration: orchestration)
                               .execution_process
         return fail_orchestration if execution_process.failed?
 
+        return cancel_orchestration(execution_process:) if orchestration.canceled?
         execution_process = Functions::Orchestrations::Executions::Metadata
                               .process(previous_execution: execution_process, orchestration: orchestration)
                               .execution_process
         return fail_orchestration if execution_process.failed?
 
+        return cancel_orchestration(execution_process:) if orchestration.canceled?
         execution_process = Functions::Orchestrations::Executions::UploadToServer
                               .process(previous_execution: execution_process, orchestration: orchestration)
                               .execution_process
         return fail_orchestration if execution_process.failed?
 
+        return cancel_orchestration(execution_process:) if orchestration.canceled?
         execution_process = Functions::Orchestrations::Executions::RemoveLocalFiles
                               .process(previous_execution: execution_process, orchestration: orchestration)
                               .execution_process
         return fail_orchestration if execution_process.failed?
 
+        return cancel_orchestration(execution_process:) if orchestration.canceled?
         complete_orchestration
       end
 
@@ -102,6 +123,17 @@ module Functions
         self
       end
 
+      # @param execution_process [ExecutionProcess]
+      def cancel_orchestration(execution_process: nil)
+        execution_process = Functions::Orchestrations::Executions::RemoveLocalFiles
+                              .process(previous_execution: execution_process, orchestration: orchestration)
+                              .execution_process
+        return fail_orchestration if execution_process.failed?
+
+        orchestration.update(canceled_at: Time.now)
+        self
+      end
+
       def fail_orchestration
         orchestration.update(status: Constants::Statuses::FAILED)
         self
@@ -110,11 +142,11 @@ module Functions
       def should_start_new?
         return true if previous_orchestration.nil?
 
-        if @force
-          previous_orchestration&.failed? || previous_orchestration&.completed?
-        else
-          previous_orchestration&.failed?
-        end
+        return true if previous_orchestration&.canceled_at.present?
+
+        return true if previous_orchestration&.failed?
+
+        @force && previous_orchestration&.completed?
       end
 
       # @return [Orchestration, NilClass]

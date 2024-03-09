@@ -5,13 +5,14 @@ class EpisodeController < ApplicationController
     season_to_download = data["season"]
     url = data["url"]
     languages = data["languages"]
-    force = !data["force"].blank?
+    force = !!data["force"]
+    skip = data["skip"]
 
     return render status: 500 if url.blank? || languages.blank? || season_to_download.blank?
 
-    episodes = Functions::Downloads::ShowInfo.new(url:, season: season_to_download, languages:).process.data
+    episodes = Functions::Downloads::ShowInfo.new(url:, season: season_to_download, languages:, skip:).process.data
 
-    return render status: 500 if episodes.empty?
+    return render status: 500 if episodes.blank?
 
     episode_list = process_episodes(episodes:)
 
@@ -26,13 +27,15 @@ class EpisodeController < ApplicationController
 
   def from_json
     raw_data = request.raw_post
-    episodes = JSON.parse(raw_data)["episodes"]
+    data = JSON.parse(raw_data)
+    episodes = data["episodes"]
+    force = !!data["force"]
 
     episode_list = process_episodes(episodes:)
 
     episode_list.each do |episode|
       FetchEpisodeMetadataJob.perform_later(episode:)
-      orchestration = Functions::Orchestrations::Orchestrate.init(episode:).orchestration
+      orchestration = Functions::Orchestrations::Orchestrate.init(episode:, force:).orchestration
       RunOrchestrationJob.perform_later(orchestration:) unless orchestration.blank?
     end
 
@@ -52,10 +55,12 @@ class EpisodeController < ApplicationController
         title: "Season #{episode_data['season']}",
         show: show
       )
+      subtitles = episode_data['subtitles'] || []
       episode = Episode.find_or_create_by!(
         title: episode_data['name'],
         position: episode_data['episode'],
-        season:
+        season:,
+        subtitles:
       )
       episode_data['urls'].each.with_index do |u, i|
         language = Language.find_or_create_by!(

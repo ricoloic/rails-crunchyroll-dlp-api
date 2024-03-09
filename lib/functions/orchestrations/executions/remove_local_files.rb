@@ -13,7 +13,7 @@ module Functions
 
         def output
           @output ||= {
-            **previous_execution.output,
+            **(previous_execution&.output || {}),
             "#{handle}" => {}
           }
         end

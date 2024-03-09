@@ -19,10 +19,14 @@ class Orchestration < ApplicationRecord
   has_many :pending_execution_processes, -> { pending }, class_name: 'ExecutionProcess'
   has_many :not_pending_execution_processes, -> { not_pending }, class_name: 'ExecutionProcess'
 
+  has_many :canceled_execution_processes, -> { canceled }, class_name: 'ExecutionProcess'
+  has_many :not_canceled_execution_processes, -> { not_canceled }, class_name: 'ExecutionProcess'
+
   scope :running, -> { where(status: Constants::Statuses::RUNNING) }
   scope :pending, -> { where(status: Constants::Statuses::PENDING) }
   scope :completed, -> { where(status: Constants::Statuses::COMPLETED) }
   scope :failed, -> { where(status: Constants::Statuses::FAILED) }
+  scope :canceled, -> { where(status: Constants::Statuses::CANCELED) }
 
   def running?
     status == Constants::Statuses::RUNNING
@@ -38,6 +42,10 @@ class Orchestration < ApplicationRecord
 
   def failed?
     status == Constants::Statuses::FAILED
+  end
+
+  def canceled?
+    status == Constants::Statuses::CANCELED
   end
 
   def last_execution_process
